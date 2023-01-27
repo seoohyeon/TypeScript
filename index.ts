@@ -1,84 +1,67 @@
-function 함수(x: number): number {
-  // 함수는 파라미터, return값 타입지정가능
-  return x * 2;
-}
-함수(2); //타입지정된 파라미터는 필수로 써야함(JS와 다른점임)
+type Aniaml = string | number | undefined;
+let 동물: Aniaml = 123;
 
-// 파라미터가 옵션일 경우(써도되고 안써도 될때)엔 (파라미터? : 타입)
-// *중요* 변수? :number는 변수 : number | undefined와 같음. 즉 물음표쓰면 undefined도 된다 이말임.
+// type 변수 만드는 법 : 변수명 영어대문자로 시작, ~Type 으로 지으면 좋다.
+type PersonType = { name: string; age: number };
+let 사람: PersonType = { name: "kim", age: 20 };
 
-// return이 없을 경우 = void 타입 활용가능
-function 함수1(x: number): void {
-  1 + 1;
-}
+// const 변수는 등호로 재할당만 막는 역할임, const로 담은 object 수정은 자유롭게 가능.
+// 타입스크립트에서만 가능.
+const 여친 = {
+  name: "엠버",
+};
+여친.name = "유라"; //가능
 
-// 문제1 : 이름을 파라미터로 입력하면 콘솔창에 안녕하세요 홍길동 출력, 아무것도 파라미터로 입력하지 않고 함수를 사용하면
-// 이름이 없습니다를 출력하는 함수
-function printName(name?: string) {
-  if (name) {
-    console.log("안녕하세요");
-  } else {
-    console.log("이름이 없습니다.");
-  }
-}
-printName("");
+//만약, 막고싶다면,
+type Boyfriend = { readonly name: string }; // readonly 쓰면 object 자료수정도 막을 수 있음.
+const 남친: Boyfriend = { name: "성민" };
+//남친.name = "기범"; // 불가
 
-// 문제2 :함수에 숫자 또는 문자를 집어넣으면 자릿수를 세어 출력해주는 함수를 만들어보십시오.
-function printNumber(num: number | string): number {
-  if (typeof num === "number") {
-    num = String(num);
-  }
-  return Number(num.length);
-}
-printNumber(12);
+// 참고* 타입스크립터 에러는 에디더&터미널에서만 존재함. 실제 변환된 js파일은 에러없음.
 
-//쌤방법 - 너무 쉬움
-function 자릿수세기(num: number | string): number {
-  return num.toString().length; // toString(진수)
-}
+type Hi = { name?: string }; // === { name : string | undefined }
 
-// 문제3 : 결혼 가능 확률을 알려주는 함수 만들기
-/* 1. 함수의 파라미터로 월소득(만원단위), 집보유여부(true/false), 매력점수 ('상' or '중' or '하') 를 입력할 수 있어야합니다. 
-2. 월소득은 만원 당 1점, 집보유시 500점 & 미보유시 0점, 매력점수는 '상'일 때만 100점으로 계산합니다. 
-3. 총 점수가 600점 이상일 경우 "결혼가능"을 return 해줘야합니다. 그 외엔 아무것도 return하지 않습니다. */
+//타입은 합칠수도 있다(1. union type으로, 2. &연산자로 object 타입 extend하기)
+type Name = string;
+type Age = number;
+type Person = Name | Age;
 
-function canMarry(
-  salary: number,
-  haveHouse: boolean,
-  charm: string
-): string | void {
-  let salaryPoint = salary;
-  let housePoint = 0;
-  let charmingPoint = 0;
-  let totalPoint = 0;
+type PositionX = { x: number }; // type 변수 재정의 불가 (ex- positionX = number 이렇게 다시 재정의 불가)
+type PositionY = { y: number };
+type NewType = PositionX & PositionY; // ==={x :number, y:number}
 
-  if (haveHouse) {
-    housePoint += 500;
-  }
-  if (charm === "상") {
-    charmingPoint += 100;
-  }
+let position: NewType = { x: 10, y: 10 }; // 됨. 에러안남
 
-  totalPoint = salaryPoint + housePoint + charmingPoint;
+// 과제2
+type myType = {
+  color?: string;
+  size: number;
+  readonly position: number[];
+};
 
-  if (totalPoint >= 600) {
-    return "결혼가능";
-  }
-}
-canMarry(12, true, "상");
+let 테스트용변수: myType = {
+  size: 123,
+  position: [1, 2, 3],
+};
 
-//쌤방법
-function 결혼가능하냐(money, house, charm) {
-  let score: number = 0;
-  score += money;
-  if (house === true) {
-    score += 500;
-  }
-  if (charm === "상") {
-    score += 100;
-  }
-  if (score >= 600) {
-    return "결혼가능";
-  }
-}
-console.log(결혼가능하냐(100, true, "상"));
+// 과제3
+type testType = {
+  name: string;
+  phone: number;
+  email?: string;
+};
+let 회원가입정보: testType = {
+  name: "kim",
+  phone: 123,
+};
+
+// 과제4
+type User = {
+  isAdult: boolean;
+};
+type NewUser = testType & User;
+let 회원: NewUser = {
+  name: "kim",
+  phone: 123,
+  isAdult: false,
+};
